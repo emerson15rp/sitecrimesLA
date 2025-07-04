@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Criminalidade em LA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            scroll-behavior: smooth;
+            padding-left: 250px;
+        }
+        #sidebar {
+            width: 250px;
+            background: #343a40;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        #sidebar .sidebar-header {
+            padding: 20px;
+            background: #212529;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+        #sidebar .logo {
+            max-width: 150px;
+            margin-bottom: 15px;
+        }
+        #sidebar ul.components {
+            padding: 20px 0;
+        }
+        #sidebar ul li a {
+            padding: 10px 15px;
+            font-size: 1.1em;
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        #sidebar ul li a:hover {
+            color: #343a40;
+            background: #fff;
+        }
+        #sidebar ul li a.active {
+            background: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+        #content {
+            width: 100%;
+            padding: 40px;
+            background-color: #fff;
+            position: relative;
+        }
+        .section {
+            margin-bottom: 60px;
+            padding-top: 20px;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+        .chart-title {
+            color: #343a40;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .plotly-iframe {
+            width: 100%;
+            height: 700px; /* Aumentado de 500px para 700px */
+            border: none;
+            border-radius: 5px;
+        }
+        .data-overview {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .team-member {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #007bff;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+        .intro-section, .conclusion-section {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: justify;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        .title {
+            padding: 30px;
+            margin-bottom: 10px;
+            background-color: #ffffff;
+        }
+        
+        .title .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #343a40;
+        }
+        
+        .title p {
+            font-size: 1.5rem;
+            color: #6c757d;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo.png" alt="Logo" class="logo">
+            <h3>Visualização da Informação</h3>
+            <p>MAI5017 2025</p>
+        </div>
+        <ul class="list-unstyled components">
+            <li><a href="#intro" class="active">Introdução</a></li>
+            <li><a href="#overview">Visão Geral</a></li>
+            <li><a href="#time-analysis">Distribuição Temporal</a></li>
+            <li><a href="#vitime-crimes">Análise de Padrões</a></li>
+            <li><a href="#temporal-analysis">Predições Temporais</a></li>
+            <li><a href="#discussion">Discussão</a></li>
+            <li><a href="#video">Vídeo</a></li>
+            <li><a href="#conclusion">Conclusão</a></li>
+            <li><a href="#team">Equipe</a></li>
+        </ul>
+    </div>
+
+        <section id="title" class="title">
+            <div class="container text-center">
+                <h2 class="mb-4">Análise de Criminalidade</h2>
+                <p>Los Angeles</p>
+            </div>
+        </section>
+
+        <!-- Page Content -->
+        <div id="content">
+            <!-- Introdução -->
+            <section id="intro" class="intro-section">
+                <h2 class="mb-4">Introdução</h2>
+                <p>Este projeto tem como objetivo analisar os padrões de criminalidade na cidade de Los Angeles no período de 2020 até o presente. Utilizando dados oficiais do departamento de polícia de LA, buscando identificar tendências, áreas críticas e horários de maior ocorrência de crimes.</p>
+                <p>A análise visa fornecer insights valiosos para:</p>
+                <ul>
+                    <li>Entender a distribuição geográfica dos crimes</li>
+                    <li>Identificar os tipos de crimes mais comuns</li>
+                    <li>Analisar padrões temporais nas ocorrências</li>
+                    <li>Fornecer dados para políticas públicas de segurança</li>
+                </ul>
+                <p>Os dados foram coletados através do portal de dados abertos da cidade de Los Angeles e processados para garantir qualidade e consistência na análise.</p>
+                <p>Entre 2020 e 2023, a maioria dos tipos de crime em Los Angeles apresentou aumento moderado. A partir de 2023, porém, a tendência inverteu-se de forma significativa. Todos os tipos de crime analisados registraram quedas expressivas.
+                Essas melhorias estão relacionadas à implementação de estratégias de policiamento mais direcionadas, à ampliação de parcerias com organizações comunitárias e à adoção de programas de prevenção à violência, como o Gang Reduction and Youth Development (GRYD) e o Community Safety Partnership (CSP). Essas iniciativas buscam integrar ações da polícia, do governo municipal e da sociedade civil, com o objetivo de tornar Los Angeles mais segura para moradores e visitantes.
+                A prefeita Karen Bass, eleita em 2022, desempenhou papel fundamental nesse processo, promovendo políticas integradas de segurança pública e fortalecendo programas comunitários, o que contribuiu para resultados positivos visíveis na redução da criminalidade a partir de 2023.</p>
+            </section>
+
+            <!-- Visão Geral -->
+            <section id="overview" class="section">
+                <h2 class="mb-4">Visão Geral dos Dados</h2>
+                
+                <div class="chart-container mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="chart-title">📊 Dados Básicos</h4>
+                            <div class="data-overview">
+                                <p><strong>Total de registros:</strong> <span id="total-records">1,004,989</span></p>
+                                <p><strong>Período coberto:</strong> <span id="period-covered">01/01/2020 - 31/12/2024</span></p>
+                                <p><strong>Última atualização:</strong> <span id="last-update">31/12/2024</span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="chart-title">📚 Fonte dos Dados</h4>
+                            <div class="data-overview">
+                                <p>Os dados utilizados nesta análise foram obtidos através do:</p>
+                                <p><strong>Portal de Dados Abertos de Los Angeles</strong></p>
+                                <p><a href="https://catalog.data.gov/dataset/crime-data-from-2020-to-present" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    Acessar Fonte Oficial
+                                </a></p>
+                                <p class="text-muted small">Dados atualizados pelo LAPD (Los Angeles Police Department)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h4 class="chart-title">🌆 Dashboard de Dados</h4>
+                    <iframe src="dashboard_crimes_la.html" class="plotly-iframe"></iframe>
+                    <div class="analysis mt-4">
+                        <h5>📌 Metodologia</h5>
+                        <p>A análise baseou-se em dados oficiais de criminalidade divulgados pelo Departamento de Polícia de Los Angeles (LAPD) entre 2020 e 2024. Para a redução da dimensionalidade da análise, os crimes foram reagrupados nas seguintes categorias: furtos, agressões/roubos e vandalismos. Os dados foram segmentados por período (anual, mensal, semanal e horário), sexo, faixa etária, localização e região geográfica. Para identificar tendências sazonais, foram empregadas técnicas de análise de séries temporais. As políticas públicas implementadas foram mapeadas a partir de relatórios oficiais da prefeitura e notícias institucionais, destacando medidas como o fortalecimento do policiamento comunitário, a atuação da Organized Retail Crime Task Force(ORCTF), a expansão de programas como Gang Reduction and Youth Development (GRYD) e CSP, e a integração de ações de resposta a crises e prevenção à violência. Essas iniciativas foram fundamentais para a redução da criminalidade e o aumento da sensação de segurança na cidade.</p>
+                         <div class="alert alert-warning mt-3">
+                            <strong>Observação:</strong> Os dados podem sofrer variações sazonais e não refletem necessariamente a criminalidade real, mas sim os crimes reportados.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Distribuição Temporal -->
+            <section id="time-analysis" class="section">
+                <h2 class="mb-4">Distribuição Temporal</h2>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="chart-container">
+                            <img src="colunas.png" width="100%">
+                            <div class="analysis mt-4">
+                                <h5>📌 Tendencias Anuais </h5>
+                                <p>Entre 2020 e 2023, a maioria dos tipos de crime em Los Angeles apresentou aumento moderado. A partir de 2023, observou-se uma inversão na tendência, com quedas expressivas em todos os tipos de crime analisados. A prefeita Karen Bass, eleita em 2022, desempenhou papel fundamental nesse processo, promovendo políticas integradas de segurança pública e fortalecendo programas comunitários.</p> 
+
+                                <p>Entre as principais ações implementadas estão a ampliação do policiamento em áreas críticas, o apoio à ORCTF, que intensificou a vigilância e a repressão ao comércio ilegal, e a expansão de iniciativas como o GRYD e o CSP, que atuam na prevenção e intervenção junto a jovens em situação de risco.</p> 
+
+                                <p>Além disso, a prefeitura investiu em programas de resposta a crises, como o Crisis and Incident Response through Community Lead Engagement (CIRCLE), que conecta pessoas em situação de vulnerabilidade a serviços sociais e de moradia, reforçando a rede de proteção social.</p>
+
+                                <br></br>
+
+
+                                <h5>📌 Tendencias Sazonais </h5>
+                                <p>A análise das séries temporais evidencia sazonalidades em diferentes frequências. Agressões, roubos e furtos, embora atinjam seus patamares mais baixos em dezembro – possivelmente refletindo redução da mobilidade urbana e das atividades econômicas no final do ano –, registram aumento abrupto no primeiro trimestre, especialmente em janeiro. Em contraste, os delitos de vandalismo apesar de apresentarem a mesma depressão em dezembro, possuem um ápice no meio do ano.</p>
+
+
+                                <p>No domínio semanal, os padrões também se distinguem conforme o tipo de ocorrência. Furtos concentram-se às sextas-feiras e rareiam aos domingos, quando o comércio permanece predominantemente fechado. Agressões e roubos, por sua vez, alcançam maior frequência nos fins de semana – notadamente sábados e domingos –, possivelmente em razão de maior sociabilidade familiar, eventos noturnos, consumo de álcool e aglomerações em locais de lazer. Já o vandalismo mostra-se elevado às sextas-feiras, o que pode refletir tanto a transição para o período de descanso de forma extravagante quanto eventos culturais realizados nesse dia.</p>
+ 
+
+                                <p>A granularidade horária revela informações adicionais. Os furtos exibem duplos picos às 12 h e 18 h, com vale pronunciado às 5 h da manhã. Boa parte dessa distribuição pode derivar de viés de percepção: o crime, muitas vezes silencioso e não testemunhado, tende a ser descoberto apenas na pausa para o almoço ou ao término da jornada de trabalho. Agressões e roubos replicam o padrão de bimodalidade, porém com menor concentração nos horários críticos, reforçando a hipótese de que o volume observado decorre mais do fluxo elevado de pessoas nas ruas do que de atraso no registro, já que as vítimas notam imediatamente tais delitos.</p>
+ 
+
+                                <p>Por fim, o vandalismo apresenta ápice entre 17 h e 22 h, seguido de acentuado vale entre às 4 h–5 h. O crepúsculo e o início da noite proporcionam condições de baixa visibilidade, reduzindo a eficácia da vigilância, enquanto o simultâneo aumento de circulação em áreas de lazer cria oportunidades e incentivos adicionais à prática desse tipo de delito.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Análise de Vitimas -->
+            <section id="vitime-crimes" class="section">
+                <h2 class="mb-4">Padrões Demográficos e Espaciais</h2>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="chart-container">
+                            <img src="pizza.png" width="100%">
+                            <div class="analysis mt-4">
+                                <p>A ótica de gênero evidencia que os furtos acometem majoritariamente vítimas do sexo masculino, enquanto agressões e roubos se distribuem de forma praticamente equitativa entre homens e mulheres. A predominância masculina como vítimas de furtos pode refletir maior exposição a situações de risco – por exemplo, deslocamentos frequentes em vias públicas.</p>
+
+                                <p>Do ponto de vista regional, furtos mantêm‐se como modalidade hegemônica, respondendo por 55% das ocorrências em praticamente todo o território analisado. Agressões e roubos, somados, perfazem 30%, enquanto atos de vandalismo completam o quadro com 10%. A única exceção relevante situa-se na região Sul, onde agressões e roubos alcançam 36% do total, sinalizando ambiente relativamente mais propenso a delitos violentos.</p>
+
+                                <p>De forma mais específica, a zona imediata ao 7th Street Metro Center sobressai como a de maior risco. O intenso adensamento de residentes, trabalhadores e usuários do transporte coletivo eleva tanto a oferta de alvos quanto a probabilidade de conflito, formando ambiente propício à prática reiterada de crimes patrimoniais e violentos.</p>
+
+                                <p>A distribuição segundo a tipologia de local reforça disparidades comportamentais. Nos furtos, 44% verificam-se em espaços públicos – ruas, praças e terminais –, 34% em residências e 19\% em estabelecimentos comerciais ou de serviços. A elevada incidência em logradouros abertos sugere oportunidade abundante aliada à baixa percepção de risco. Já agressões e roubos exibem padrão mais equilibrado: 41% em espaços públicos e igual proporção em domicílios, restando 15% para o comércio. O fato de quase metade das agressões ocorrerem no ambiente doméstico indica que a confiança associada ao lar não elimina, e por vezes mascara, fontes de violência interpessoal. Vandalismos, por sua vez, concentram-se em vias e equipamentos públicos (53%), onde a visibilidade simbólica do ato, a aparente ausência de vítima e a facilidade de fuga convergem; residências absorvem 26% e o comércio, 20%.</p>
+
+                                <p>A segmentação etária das vítimas revela anomalias. Nos furtos, 40% recaem sobre indivíduos classificados entre 0 e 9 anos – porcentual aparentemente inflado pela imputação de “0” a registros sem idade informada. Mesmo assim, as faixas de 20 a 29 anos (15%) e 30 a 39 anos (17%) mantêm-se expressivas, refletindo maior exposição cotidiana desses grupos a espaços públicos. Agressões e roubos, ao contrário, concentram-se em adultos jovens: quase metade dos casos envolve pessoas de 20 a 39 anos; vítimas de 40 a 49 anos representam 16%, enquanto crianças menores de 9 anos somam 7% e adolescentes, 9%. O perfil sugere que a sociabilidade noturna e inserção laboral sejam fatores de risco para crimes com emprego de força ou intimidação.</p>
+                                <img src="mapa.png" width="100%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Séries Temporais-->
+            <section id="temporal-analysis" class="section">
+                <h2 class="mb-4">Predições Temporais</h2>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="chart-container">
+                            <h4 class="chart-title">Séries Temporais</h4>
+                            <div class="analysis mt-4">
+                                <p>O objetivo desta análise foi prever o número mensal de ocorrências de furto em Los Angeles para o ano de 2025, com base nos dados históricos de janeiro de 2020 a dezembro de 2024. A escolha por esse tipo de crime se justifica pelo fato de que furtos representaram 56,8% de todos os crimes registrados no período, sendo, portanto, a categoria criminosa mais recorrente.</p>
+
+                                <p>Para a análise, foram selecionadas as colunas relevantes do dataset:</p>
+                                <ul>
+                                    <li>'DR_NO': identificador único do registro policial</li>
+                                    <li>'DATE OCC': data da ocorrência</li>
+                                    <li>'Crm Cd Desc': descrição do tipo de crime</li>
+                                    <li>'Year' e 'Month': desdobramentos extraídos da data</li>
+                                </ul>
+                                <p>A partir dessas informações, foi criado um dataset com a contagem mensal de furtos. Em seguida, foi calculada a média móvel de 12 meses para suavizar variações sazonais e identificar tendências. O gráfico resultante mostrou o comportamento da série temporal ao longo do período:</p>
+                                <img src="Ocorrencias_Furtos.png" width="100%">
+
+                                <br></br>
+
+                                <p>Ao observar o gráfico com as ocorrências mensais de furto, identificamos uma queda significativa a partir de janeiro de 2024, possivelmente relacionada a mudanças estruturais, políticas públicas ou eventos externos. Isso indica um comportamento atípico em comparação com anos anteriores.</p>
+
+                                <p>Para selecionar o melhor modelo de previsão, foi utilizada a biblioteca PyCaret — uma ferramenta de aprendizado de máquina em Python que permite realizar experimentos complexos, comparar modelos e gerar previsões.</p>
+                                <div style="text-align: center;">
+                                <img src="PyCaret.png">
+                                </div>
+
+                                <ul>
+                                    <li>data_split_shuffle=False: impede o embaralhamento dos dados, preservando a ordem cronológica.</li>
+                                    <li>fold_strategy='timeseries': define que a validação cruzada será feita respeitando o tempo.</li>
+                                    <li>numeric_features: inclui variáveis derivadas de tempo como entradas para o modelo.</li>
+                                    <li>transform_target=True: aplica transformação ao target para melhorar a distribuição e a performance dos modelos.</li>
+                                </ul>
+
+                                <p>A decisão de deixar o PyCaret cuidar da divisão entre treino e teste foi tomada com base no comportamento anormal observado em 2024. A biblioteca fez a divisão automática com 70% dos dados para treino e 30% para teste.</p>
+
+                                <p>Os modelos foram comparados utilizando a compare_models() que testou e ranqueou diversos algoritmos de regressão com base na métrica MAE (Erro Absoluto Médio). Abaixo estão os principais resultados:</p>
+                                <div style="text-align: center;">
+                                <img src="Tabela.png">
+                                </div>
+
+                                <br></br>
+
+                                <p>O melhor modelo selecionado foi o AdaBoost Regressor, com o menor MAE (6.8936) e um percentual de erro médio MAPE (0.2002) razoavelmente baixo. Ainda que o R² tenha sido negativo (-0.3370), indicando baixa explicação da variância, o desempenho geral em erro absoluto foi superior aos demais.</p>
+
+                                <p>Após selecionar o melhor modelo, ele foi testado no conjunto de dados reservado (holdout) para verificar sua capacidade de generalização:</p>
+                                <div style="text-align: center;">
+                                <img src="Modelo.png">
+                                </div>
+
+                                <br></br>
+
+                                <p>O MAE subiu de 6.89 (validação cruzada) para 8.35 no holdout, o que era esperado. O MAPE dobrou para 42%, o que pode ser sinal de que o modelo teve dificuldade em prever valores mais baixos ou irregulares no final da série (2024). O R² continuou negativo, o que reforça a ideia de que o modelo não explica bem a variabilidade das ocorrências de furto ao longo do tempo — talvez devido à queda abrupta em 2024.</p>
+                                <div style="text-align: center;">
+                                <img src="Predição.png">
+                                </div>
+
+                                <br></br>
+
+                                <p>O modelo AdaBoost Regressor apresentou o melhor desempenho em erro absoluto durante os testes de previsão de furtos conduzida com dados históricos de 2020 a 2024.A análise revelou um comportamento fora do padrão no ano de 2024, impactando negativamente a capacidade preditiva dos modelos.</p>
+
+                                <p>Embora o modelo tenha mantido estabilidade no menor Erro Absoluto Médio (MAE), a alta do Erro Percentual Absoluto Médio (MAPE) no holdout alerta para a necessidade de ajustes, como a Inclusão de variáveis sazonais ou externas (ex: lockdowns, eventos, feriados) e a remoção ou suavização de outliers. O coeficiente de determinação (R²) negativo indica que o modelo não só não conseguiu capturar a variabilidade dos dados, como também foi pior do que uma previsão baseada na média.</p>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Séries Temporais-->
+            <section id="discussion" class="section">
+                <h2 class="mb-4">Discussão</h2>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="chart-container">
+                            <div class="analysis mt-4">
+                                <p>A análise revela que as estratégias integradas de segurança pública, aliadas ao fortalecimento de programas comunitários, foram determinantes para a redução da criminalidade em Los Angeles a partir de 2023. A sazonalidade dos crimes sugere a influência de fatores comportamentais e ambientais, como maior fluxo de pessoas em determinados períodos e condições de visibilidade. O viés de registro em relação à faixa etária das vítimas e os horários de furtos indica a necessidade de aprimoramento nos sistemas de coleta de dados. A região Sul destaca-se por uma composição de crimes violentos, enquanto a região central, próxima à 7th Street Metro Center, apresenta maior volume de incidentes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vídeo Explicativo -->
+            <section id="video" class="section">
+                <h2 class="mb-4">Vídeo Explicativo</h2>
+                <div class="video-container">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/SEU_CODIGO_DO_VIDEO" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p class="mt-3">Este vídeo explica nossa metodologia de análise e os principais insights encontrados no estudo.</p>
+            </section>
+
+            <!-- Conclusão -->
+            <section id="conclusion" class="conclusion-section">
+                <h2 class="mb-4">Conclusão</h2>
+                <p>A criminalidade em Los Angeles apresentou tendência de queda a partir de 2023, reflexo de políticas públicas integradas e do envolvimento comunitário. A análise das tendências sazonais, demográficas e espaciais permite identificar padrões críticos e direcionar ações preventivas. A continuidade e o aprimoramento dessas estratégias são essenciais para a manutenção da segurança pública na cidade.</p>
+
+            <!-- Equipe -->
+            <section id="team" class="section">
+                <h2 class="mb-4 text-center">Nossa Equipe</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="team-member">
+                            <img src="Emerson.jpg" alt="Membro 1">
+                            <h4>Emerson Rocha Pereira</h4>
+                            <p>Desenvolvedor Web</p>
+                            <p>emersonrocha@usp.br</p>
+                            <p>Responsável pelo desenvolvimento do website e video.</p>
+                            <p><a href="https://www.linkedin.com/in/emerson-rocha-pereira-163a42210/" target="_blank">LinkedIn</a></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="team-member">
+                            <img src="Erico.jpg" alt="Membro 2">
+                            <h4>Érico Daniel Witzel dos Reis</h4>
+                            <p>Cientista de Dados</p>
+                            <p>ericodosreis@usp.br</p>
+                            <p>Responsável pelo desenvolvimento e análise das séries temporais.</p>
+                            <p><a href="https://www.linkedin.com/in/erico-dos-reis/" target="_blank">LinkedIn</a></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="team-member">
+                            <img src="Gabriel.png" alt="Membro 3">
+                            <h4>Gabriel Sifuentes Rocha</h4>
+                            <p>Cientista de Dados</p>
+                            <p>gabrielsifu@alumni.usp.br</p>
+                            <p>Responsável pela análise de dados e desenvolvimento do artigo.</p>
+                            <p><a href="https://www.linkedin.com/in/gabriel-sifuentes-rocha/" target="_blank">LinkedIn</a></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ativa o scroll spy
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('#sidebar a');
+            
+            function updateActiveMenu() {
+                let fromTop = window.scrollY + 200;
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (fromTop >= sectionTop && fromTop < sectionTop + sectionHeight) {
+                        const id = section.getAttribute('id');
+                        
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }
+            
+            document.querySelectorAll('#sidebar a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                        
+                        navLinks.forEach(link => link.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+            
+            updateActiveMenu();
+            
+            window.addEventListener('scroll', function() {
+                updateActiveMenu();
+            });
+
+            document.getElementById('total-records').textContent = "1,004,989";
+            document.getElementById('period-covered').textContent = "01/01/2020 - 31/12/2024";
+            document.getElementById('last-update').textContent = "31/12/2024";
+        });
+    </script>
+</body>
+</html>
